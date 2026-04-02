@@ -12,14 +12,18 @@
       ],
       "cwd": "${workspaceRoot}",
       "sourceMaps": true,
-      "outFiles": [
-        "${workspaceRoot}/lib/esm/**"
-      ],
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "outFiles": ["${workspaceRoot}/lib/esm/**"],
+      "skipFiles": ["<node_internals>/**"],
       "smartStep": true,
       "preLaunchTask": "npm: watch"
+    },
+    {
+      "name": "Launch CSS Inlay Hint Demo Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}/demo-extension"],
+      "outFiles": ["${workspaceFolder}/demo-extension/out/**/*.js"],
+      "preLaunchTask": "watch all"
     }
   ]
 }
