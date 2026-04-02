@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "strategy": "conservative-box-first",
+  "scope": "first-batch",
+  "renderingDefaults": {
+    "hintSide": "left",
+    "suffix": ":",
+    "padding": " "
+  },
+  "families": [
+    {
+      "family": "box-sides",
+      "kind": "sides",
+      "stage": 1,
+      "priority": 10,
+      "properties": [
+        "margin",
+        "padding",
+        "border-width",
+        "border-style",
+        "border-color"
+      ],
+      "slots": ["top", "right", "bottom", "left"],
+      "labelsByArity": {
+        "1": ["all"],
+        "2": ["top/bottom", "right/left"],
+        "3": ["top", "right/left", "bottom"],
+        "4": ["top", "right", "bottom", "left"]
+      },
+      "notes": [
+        "Use the same slot mapping for all four-edge shorthands.",
+        "Prefer role labels over type labels.",
+        "Keep single-value shorthand as all, not a type-specific label."
+      ]
+    },
+    {
+      "family": "box-corners",
+      "kind": "corners",
+      "stage": 1,
+      "priority": 9,
+      "properties": ["border-radius"],
+      "slots": ["top-left", "top-right", "bottom-right", "bottom-left"],
+      "labelsByArity": {
+        "1": ["all"],
+        "2": ["top-left/bottom-right", "top-right/bottom-left"],
+        "3": ["top-left", "top-right/bottom-left", "bottom-right"],
+        "4": ["top-left", "top-right", "bottom-right", "bottom-left"]
+      },
+      "notes": [
+        "Keep corner mapping separate from edge mapping.",
+        "Use only when the value count makes the slot meaning stable.",
+        "Do not mix this family with grid or flex semantics."
+      ]
+    }
+  ],
+  "deferredFamilies": [
+    {
+      "family": "layout-flex",
+      "kind": "layout",
+      "stage": 2,
+      "priority": 20,
+      "properties": [
+        "flex",
+        "flex-flow",
+        "align-content",
+        "align-items",
+        "align-self",
+        "justify-content",
+        "justify-items",
+        "justify-self"
+      ],
+      "status": "defer"
+    },
+    {
+      "family": "layout-grid",
+      "kind": "layout",
+      "stage": 2,
+      "priority": 20,
+      "properties": [
+        "grid",
+        "grid-template",
+        "grid-area",
+        "grid-row",
+        "grid-column"
+      ],
+      "status": "defer"
+    }
+  ],
+  "selectionPolicy": {
+    "firstBatch": "box-only",
+    "includeLogicalBox": false,
+    "includeLayoutFamilies": false,
+    "conservativeOnly": true
+  }
+}

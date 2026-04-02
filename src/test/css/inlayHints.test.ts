@@ -90,8 +90,71 @@ suite("CSS - Inlay Hints", () => {
 		assert.equal(hints[1].paddingRight, true);
 	});
 
-	test("does not emit box shorthand hints for a single value", () => {
-		const source = ".foo { padding: 1px; }";
+	test("emits role hints for border-width and border-style box shorthands", () => {
+		const source = ".foo { border-width: 1px 2px 3px 4px; border-style: solid dashed; }";
+		const document = createDocument(source);
+		const stylesheet = languageService.parseStylesheet(document) as unknown as nodes.Stylesheet;
+		const hints = languageService.doInlayHints!(document, stylesheet);
+
+		assert.equal(hints.length, 6);
+		assert.deepEqual(hints[0].position, document.positionAt(source.indexOf("1px")));
+		assert.equal(hints[0].label, "top:");
+		assert.equal(hints[0].kind, InlayHintKind.Parameter);
+		assert.deepEqual(hints[1].position, document.positionAt(source.indexOf("2px")));
+		assert.equal(hints[1].label, "right:");
+		assert.equal(hints[1].kind, InlayHintKind.Parameter);
+		assert.deepEqual(hints[2].position, document.positionAt(source.indexOf("3px")));
+		assert.equal(hints[2].label, "bottom:");
+		assert.equal(hints[2].kind, InlayHintKind.Parameter);
+		assert.deepEqual(hints[3].position, document.positionAt(source.indexOf("4px")));
+		assert.equal(hints[3].label, "left:");
+		assert.equal(hints[3].kind, InlayHintKind.Parameter);
+		assert.deepEqual(hints[4].position, document.positionAt(source.indexOf("solid")));
+		assert.equal(hints[4].label, "top/bottom:");
+		assert.equal(hints[4].kind, InlayHintKind.Parameter);
+		assert.deepEqual(hints[5].position, document.positionAt(source.indexOf("dashed")));
+		assert.equal(hints[5].label, "right/left:");
+		assert.equal(hints[5].kind, InlayHintKind.Parameter);
+	});
+
+	test("emits role hints for border-color and border-radius box shorthands", () => {
+		const source = ".foo { border-color: red green blue yellow; border-radius: 1px 2px 3px; }";
+		const document = createDocument(source);
+		const stylesheet = languageService.parseStylesheet(document) as unknown as nodes.Stylesheet;
+		const hints = languageService.doInlayHints!(document, stylesheet);
+
+		assert.equal(hints.length, 7);
+		assert.deepEqual(hints[0].position, document.positionAt(source.indexOf("red")));
+		assert.equal(hints[0].label, "top:");
+		assert.deepEqual(hints[1].position, document.positionAt(source.indexOf("green")));
+		assert.equal(hints[1].label, "right:");
+		assert.deepEqual(hints[2].position, document.positionAt(source.indexOf("blue")));
+		assert.equal(hints[2].label, "bottom:");
+		assert.deepEqual(hints[3].position, document.positionAt(source.indexOf("yellow")));
+		assert.equal(hints[3].label, "left:");
+		assert.deepEqual(hints[4].position, document.positionAt(source.indexOf("1px")));
+		assert.equal(hints[4].label, "top-left:");
+		assert.deepEqual(hints[5].position, document.positionAt(source.indexOf("2px")));
+		assert.equal(hints[5].label, "top-right/bottom-left:");
+		assert.deepEqual(hints[6].position, document.positionAt(source.indexOf("3px")));
+		assert.equal(hints[6].label, "bottom-right:");
+	});
+
+	test("emits an all hint for single-value box shorthands", () => {
+		const source = ".foo { margin: 12px; }";
+		const document = createDocument(source);
+		const stylesheet = languageService.parseStylesheet(document) as unknown as nodes.Stylesheet;
+		const hints = languageService.doInlayHints!(document, stylesheet);
+
+		assert.equal(hints.length, 1);
+		assert.deepEqual(hints[0].position, document.positionAt(source.indexOf("12px")));
+		assert.equal(hints[0].label, "all:");
+		assert.equal(hints[0].kind, InlayHintKind.Parameter);
+		assert.equal(hints[0].paddingRight, true);
+	});
+
+	test("does not emit longhand hints for generic length or color restrictions", () => {
+		const source = ".foo { padding-top: 12px; color: red; text-align: center; align-self: stretch; }";
 		const document = createDocument(source);
 		const stylesheet = languageService.parseStylesheet(document) as unknown as nodes.Stylesheet;
 		const hints = languageService.doInlayHints!(document, stylesheet);
